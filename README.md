@@ -60,11 +60,7 @@ Shows:
 
 ### `logs`
 
-Tails the log file:
-
-```sh
-./brewer logs
-```
+- Tails the log file.
 
 ## Requirements
 
@@ -82,14 +78,3 @@ Tails the log file:
 - `brewer.sh`: one-shot maintenance runner
 - `install-launchd-brewer.sh`: writes and loads LaunchAgent
 - `uninstall-launchd-brewer.sh`: unloads and removes LaunchAgent
-
-## Development Validation
-
-After editing scripts, run:
-
-```sh
-zsh -n brewer
-zsh -n brewer.sh
-zsh -n install-launchd-brewer.sh
-zsh -n uninstall-launchd-brewer.sh
-```
