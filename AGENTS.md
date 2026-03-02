@@ -5,9 +5,9 @@ Applies to the entire repository rooted at `/Users/adizim/dev/brewer`.
 
 ## Project Overview
 - `brewer` is the CLI entrypoint.
-- `scripts/install-launchd-brewer.sh` installs the per-user LaunchAgent.
-- `scripts/uninstall-launchd-brewer.sh` removes the per-user LaunchAgent.
-- `scripts/brewer.sh` runs `brew update` and `brew upgrade`.
+- `install-launchd-brewer.sh` installs the per-user LaunchAgent.
+- `uninstall-launchd-brewer.sh` removes the per-user LaunchAgent.
+- `brewer.sh` runs `brew update` and `brew upgrade`.
 
 ## Behavior Expectations
 - Keep launchd label as `com.adizim.brewer` unless explicitly requested.
@@ -27,9 +27,9 @@ Applies to the entire repository rooted at `/Users/adizim/dev/brewer`.
 ## Validation
 - Run syntax checks after script edits:
   - `zsh -n brewer`
-  - `zsh -n scripts/brewer.sh`
-  - `zsh -n scripts/install-launchd-brewer.sh`
-  - `zsh -n scripts/uninstall-launchd-brewer.sh`
+  - `zsh -n brewer.sh`
+  - `zsh -n install-launchd-brewer.sh`
+  - `zsh -n uninstall-launchd-brewer.sh`
 - If CLI path logic changes, test both:
   - `./brewer help`
   - `/usr/local/bin/brewer help` (when symlink exists)

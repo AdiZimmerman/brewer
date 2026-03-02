@@ -26,7 +26,7 @@ cd /Users/adizim/dev/brewer
 - installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
 
 If `/usr/local/bin` is not writable, `install` prints a warning with a `sudo ln -sf ...` command and continues with launchd setup.
-If launchd is already installed, `install` skips launchd setup.
+If launchd is already installed, `install` skips setup unless the runner path is outdated, in which case it reinstalls.
 
 ## Commands
 
@@ -53,3 +53,5 @@ brewer uninstall
 ## Logs
 
 `~/Library/Logs/brewer.log`
+
+Both launchd runs and `brewer run` append to this log.
