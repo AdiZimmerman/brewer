@@ -1,45 +1,54 @@
-# Brewer launchd maintenance utility
+# Brewer
 
-This utility installs a per-user `launchd` job that runs:
+`brewer` installs a per-user macOS `launchd` job that runs:
 
 - `brew update`
 - `brew upgrade`
 
-Schedule behavior:
+Schedule:
 
-- runs on job load (typically at login)
-- runs every 24 hours (`StartInterval = 86400`)
-- if a run is missed during sleep, `launchd` runs the job soon after wake
+- on load/login (`RunAtLoad`)
+- every 24 hours (`StartInterval = 86400`)
+- after wake if a scheduled interval was missed
 
-## Install (launchd job)
+## Quick Start
 
-```sh
-./scripts/install-launchd-brewer.sh
-```
-
-## Uninstall
+After cloning:
 
 ```sh
-./scripts/uninstall-launchd-brewer.sh
+cd /Users/adizim/dev/brewer
+./brewer install
 ```
 
-## Logs
+`install` does two things:
 
-`~/Library/Logs/brewer.log`
+- installs CLI at `/usr/local/bin/brewer`
+- installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
 
-## `brewer` CLI
+If `/usr/local/bin` is not writable, `install` exits with an error.
 
-This repo now includes a command entrypoint: [`brewer`](/Users/adizim/dev/brewer/brewer)
+## Commands
 
 From repo root:
 
 ```sh
 ./brewer install
+./brewer run
 ./brewer status
 ./brewer logs
 ./brewer uninstall
 ```
 
-`./brewer install` installs the command at `/usr/local/bin/brewer`.
-If that location is not writable for your user, the command exits with an error.
-If launchd is already installed, `./brewer install` skips launchd setup.
+From anywhere (after install):
+
+```sh
+brewer install
+brewer run
+brewer status
+brewer logs
+brewer uninstall
+```
+
+## Logs
+
+`~/Library/Logs/brewer.log`
