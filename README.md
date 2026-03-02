@@ -22,10 +22,8 @@ cd /Users/adizim/dev/brewer
 
 `install` does two things:
 
-- installs CLI at `/usr/local/bin/brewer`
 - installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
 
-If `/usr/local/bin` is not writable, `install` prints a warning with a `sudo ln -sf ...` command and continues with launchd setup.
 If launchd is already installed, `install` skips setup unless the runner path is outdated, in which case it reinstalls.
 
 ## Commands
@@ -38,16 +36,6 @@ From repo root:
 ./brewer status
 ./brewer logs
 ./brewer uninstall
-```
-
-From anywhere (after install):
-
-```sh
-brewer install
-brewer run
-brewer status
-brewer logs
-brewer uninstall
 ```
 
 ## Logs

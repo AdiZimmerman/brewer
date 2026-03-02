@@ -7,61 +7,13 @@ LABEL="com.adizim.brewer"
 UID_VALUE="$(id -u)"
 PLIST_PATH="$HOME/Library/LaunchAgents/$LABEL.plist"
 LOG_PATH="$HOME/Library/Logs/brewer.log"
-SELF_PATH="$SCRIPT_PATH"
-
-install_cli() {
-  local global_target="/usr/local/bin/brewer"
-  local existing_cli=""
-
-  existing_cli="$(command -v brewer || true)"
-  if [[ -n "$existing_cli" ]]; then
-    echo "CLI already available at: $existing_cli"
-    return 0
-  fi
-
-  if ! ln -sf "$SELF_PATH" "$global_target" 2>/dev/null; then
-    echo "Warning: unable to install CLI at $global_target" >&2
-    echo "This path is not writable for the current user." >&2
-    echo "To install global CLI, run:" >&2
-    echo "  sudo ln -sf \"$SELF_PATH\" \"$global_target\"" >&2
-    return 1
-  fi
-
-  echo "CLI installed at: $global_target"
-  return 0
-}
-
-uninstall_cli() {
-  local global_target="/usr/local/bin/brewer"
-  local target_real=""
-
-  if [[ ! -e "$global_target" ]]; then
-    return 0
-  fi
-
-  target_real="${global_target:A}"
-  if [[ "$target_real" != "$SELF_PATH" ]]; then
-    echo "CLI at $global_target does not point to this repo; leaving it unchanged."
-    return 0
-  fi
-
-  if rm -f "$global_target" 2>/dev/null; then
-    echo "Removed CLI: $global_target"
-    return 0
-  fi
-
-  echo "Warning: unable to remove CLI at $global_target" >&2
-  echo "Run manually:" >&2
-  echo "  sudo rm -f \"$global_target\"" >&2
-  return 0
-}
 
 usage() {
   cat <<'EOF'
 Usage: brewer <command>
 
 Commands:
-  install   Install CLI shim; install launchd job if missing
+  install   Install launchd job if missing
   uninstall Uninstall and disable launchd job
   run       Run brewer maintenance once now
   status    Show launchd/plist status
@@ -74,7 +26,6 @@ cmd="${1:-help}"
 
 case "$cmd" in
   install)
-    install_cli || true
     EXPECTED_RUNNER_PATH="$ROOT_DIR/brewer.sh"
     if [[ -f "$PLIST_PATH" ]]; then
       if grep -Fq "$EXPECTED_RUNNER_PATH" "$PLIST_PATH"; then
@@ -86,7 +37,6 @@ case "$cmd" in
     exec "$ROOT_DIR/install-launchd-brewer.sh"
     ;;
   uninstall)
-    uninstall_cli
     exec "$ROOT_DIR/uninstall-launchd-brewer.sh"
     ;;
   run)
