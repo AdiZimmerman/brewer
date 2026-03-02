@@ -1,45 +1,95 @@
-# Brewer
+# brewer
 
-`brewer` installs a per-user macOS `launchd` job that runs:
+`brewer` is a small macOS CLI that manages a per-user `launchd` job to keep Homebrew packages up to date.
 
+The scheduled job runs:
 - `brew update`
 - `brew upgrade`
 
-Schedule:
+## What It Installs
 
-- on load/login (`RunAtLoad`)
-- every 24 hours (`StartInterval = 86400`)
-- after wake if a scheduled interval was missed
+- LaunchAgent label: `com.adizim.brewer`
+- Plist path: `~/Library/LaunchAgents/com.adizim.brewer.plist`
+- Log path: `~/Library/Logs/brewer.log`
+- Runner script: `brewer.sh`
 
-## Quick Start
+## Schedule
 
-After cloning:
-
-```sh
-cd brewer
-./brewer install
-```
-
-`install`:
-
-- installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
-
-If launchd is already installed, `install` skips setup unless the runner path is outdated, in which case it reinstalls.
+The LaunchAgent is configured to:
+- run at login/load (`RunAtLoad`)
+- run every 24 hours (`StartInterval = 86400`)
+- catch up after wake if an interval was missed (launchd behavior)
 
 ## Commands
 
-From repo root:
+Run from the repository root:
 
 ```sh
 ./brewer install
+./brewer uninstall
 ./brewer run
 ./brewer status
 ./brewer logs
-./brewer uninstall
+./brewer help
 ```
 
-## Logs
+### `install`
 
-`~/Library/Logs/brewer.log`
+- Installs launchd setup if the plist is missing.
+- If the plist exists and already points to this repo's `brewer.sh`, install is skipped.
+- If the plist exists but points to an outdated runner path, install is re-run to refresh it.
 
-Both launchd runs and `brewer run` append to this log.
+### `uninstall`
+
+- Unloads the launchd job (if loaded)
+- Removes `~/Library/LaunchAgents/com.adizim.brewer.plist`
+
+### `run`
+
+Runs maintenance immediately once:
+- executes `brewer.sh`
+- appends output to `~/Library/Logs/brewer.log`
+- exits with the same status as the maintenance script
+
+### `status`
+
+Shows:
+- plist presence
+- launchd loaded state for `gui/<uid>/com.adizim.brewer`
+- log file path
+
+### `logs`
+
+Tails the log file:
+
+```sh
+./brewer logs
+```
+
+## Requirements
+
+- macOS (uses per-user `launchd` / `launchctl`)
+- Homebrew installed (`brew` must be discoverable)
+- `zsh`
+
+`brewer.sh` checks common Homebrew locations first:
+- `/opt/homebrew/bin/brew`
+- `/usr/local/bin/brew`
+
+## Repo Files
+
+- `brewer`: CLI entrypoint
+- `brewer.sh`: one-shot maintenance runner
+- `install-launchd-brewer.sh`: writes and loads LaunchAgent
+- `uninstall-launchd-brewer.sh`: unloads and removes LaunchAgent
+
+## Development Validation
+
+After editing scripts, run:
+
+```sh
+zsh -n brewer
+zsh -n brewer.sh
+zsh -n install-launchd-brewer.sh
+zsh -n uninstall-launchd-brewer.sh
+```
