@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Scope
-Applies to the entire repository rooted at `/Users/adizim/dev/brewer`.
+Applies to the entire repository.
 
 ## Project Overview
 - `brewer` is the CLI entrypoint.

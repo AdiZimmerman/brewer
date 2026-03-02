@@ -16,7 +16,7 @@ Schedule:
 After cloning:
 
 ```sh
-cd /Users/adizim/dev/brewer
+cd brewer
 ./brewer install
 ```
 
