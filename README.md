@@ -20,7 +20,7 @@ cd brewer
 ./brewer install
 ```
 
-`install` does two things:
+`install`:
 
 - installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
 
