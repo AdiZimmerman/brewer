@@ -1,23 +1,27 @@
 #!/bin/zsh
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_PATH="${0:P}"
+ROOT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 SCRIPTS_DIR="$ROOT_DIR/scripts"
 LABEL="com.adizim.brewer"
 UID_VALUE="$(id -u)"
 PLIST_PATH="$HOME/Library/LaunchAgents/$LABEL.plist"
 LOG_PATH="$HOME/Library/Logs/brewer.log"
-SELF_PATH="$ROOT_DIR/brewer"
+SELF_PATH="$SCRIPT_PATH"
 
 install_cli() {
   local global_target="/usr/local/bin/brewer"
   if ! ln -sf "$SELF_PATH" "$global_target" 2>/dev/null; then
-    echo "Error: unable to install CLI at $global_target" >&2
+    echo "Warning: unable to install CLI at $global_target" >&2
     echo "This path is not writable for the current user." >&2
-    exit 1
+    echo "To install global CLI, run:" >&2
+    echo "  sudo ln -sf \"$SELF_PATH\" \"$global_target\"" >&2
+    return 1
   fi
 
   echo "CLI installed at: $global_target"
+  return 0
 }
 
 usage() {
@@ -38,7 +42,7 @@ cmd="${1:-help}"
 
 case "$cmd" in
   install)
-    install_cli
+    install_cli || true
     if [[ -f "$PLIST_PATH" ]]; then
       echo "Launchd job already installed at: $PLIST_PATH"
       echo "Skipping launchd installation."

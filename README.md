@@ -25,7 +25,8 @@ cd /Users/adizim/dev/brewer
 - installs CLI at `/usr/local/bin/brewer`
 - installs launchd job if missing (`~/Library/LaunchAgents/com.adizim.brewer.plist`)
 
-If `/usr/local/bin` is not writable, `install` exits with an error.
+If `/usr/local/bin` is not writable, `install` prints a warning with a `sudo ln -sf ...` command and continues with launchd setup.
+If launchd is already installed, `install` skips launchd setup.
 
 ## Commands
 

@@ -17,13 +17,6 @@ if [[ -z "${BREW_BIN:-}" ]]; then
   exit 1
 fi
 
-LOCK_DIR="${TMPDIR:-/tmp}/brewer.lock"
-if ! mkdir "$LOCK_DIR" 2>/dev/null; then
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] another run is already in progress; exiting."
-  exit 0
-fi
-trap 'rmdir "$LOCK_DIR" >/dev/null 2>&1 || true' EXIT
-
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] starting brewer maintenance"
 "$BREW_BIN" update
 "$BREW_BIN" upgrade
