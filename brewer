@@ -1,0 +1,78 @@
+#!/bin/zsh
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPTS_DIR="$ROOT_DIR/scripts"
+LABEL="com.adizim.brewer"
+UID_VALUE="$(id -u)"
+PLIST_PATH="$HOME/Library/LaunchAgents/$LABEL.plist"
+LOG_PATH="$HOME/Library/Logs/brewer.log"
+SELF_PATH="$ROOT_DIR/brewer"
+
+install_cli() {
+  local global_target="/usr/local/bin/brewer"
+  if ! ln -sf "$SELF_PATH" "$global_target" 2>/dev/null; then
+    echo "Error: unable to install CLI at $global_target" >&2
+    echo "This path is not writable for the current user." >&2
+    exit 1
+  fi
+
+  echo "CLI installed at: $global_target"
+}
+
+usage() {
+  cat <<'EOF'
+Usage: brewer <command>
+
+Commands:
+  install   Install CLI shim; install launchd job if missing
+  uninstall Uninstall and disable launchd job
+  run       Run brewer maintenance once now
+  status    Show launchd/plist status
+  logs      Tail maintenance logs
+  help      Show this help
+EOF
+}
+
+cmd="${1:-help}"
+
+case "$cmd" in
+  install)
+    install_cli
+    if [[ -f "$PLIST_PATH" ]]; then
+      echo "Launchd job already installed at: $PLIST_PATH"
+      echo "Skipping launchd installation."
+      exit 0
+    fi
+    exec "$SCRIPTS_DIR/install-launchd-brewer.sh"
+    ;;
+  uninstall)
+    exec "$SCRIPTS_DIR/uninstall-launchd-brewer.sh"
+    ;;
+  run)
+    exec "$SCRIPTS_DIR/brewer.sh"
+    ;;
+  status)
+    if [[ -f "$PLIST_PATH" ]]; then
+      echo "Plist: present ($PLIST_PATH)"
+    else
+      echo "Plist: missing ($PLIST_PATH)"
+    fi
+    launchctl print "gui/$UID_VALUE/$LABEL" >/dev/null 2>&1 && \
+      echo "Launchd job: loaded (gui/$UID_VALUE/$LABEL)" || \
+      echo "Launchd job: not loaded (gui/$UID_VALUE/$LABEL)"
+    echo "Log file: $LOG_PATH"
+    ;;
+  logs)
+    touch "$LOG_PATH"
+    exec tail -n 100 -f "$LOG_PATH"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
