@@ -3,7 +3,6 @@
 `brewer` is a small macOS CLI that manages a per-user `launchd` job to keep Homebrew packages up to date.
 
 The scheduled job runs:
-- `brew update`
 - `brew upgrade`
 
 ## What It Installs

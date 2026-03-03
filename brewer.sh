@@ -18,5 +18,5 @@ if [[ -z "${BREW_BIN:-}" ]]; then
 fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] starting brewer"
-"$BREW_BIN" update && "$BREW_BIN" upgrade
+"$BREW_BIN" upgrade
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] brewer completed"
